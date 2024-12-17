@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y2K Brutalist Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background: #e0e0e0;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .calculator-container {
+            background: #fff;
+            padding: 50px;
+            border-radius: 5px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            border: 8px solid #ff0099;
+            box-shadow: -12px 12px 0 #000;
+            position: relative;
+            transform: rotate(-2deg);
+        }
+        .calculator-container::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 60px;
+            height: 60px;
+            background: #00e6ff;
+            z-index: -1;
+            box-shadow: -10px 10px 0 #000;
+        }
+        h1 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            color: #ff0099;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: rotate(2deg);
+        }
+        input[type="text"] {
+            padding: 20px;
+            border: 5px solid #000;
+            outline: none;
+            width: calc(100% - 50px);
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            background: #ff0099;
+            color: #fff;
+            box-shadow: inset -4px -4px 0 #000;
+            font-family: 'VT323', monospace;
+            transform: rotate(-1deg);
+        }
+        button {
+            background: #00e6ff;
+            color: #000;
+            padding: 15px 40px;
+            border: 6px solid #000;
+            border-radius: 0;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            box-shadow: -8px 8px 0 #000;
+            text-transform: uppercase;
+        }
+        button:hover {
+            transform: translate(-8px, -8px);
+        }
+        .result {
+            font-size: 2.5em;
+            margin-top: 30px;
+            color: #000;
+            font-weight: bold;
+            transform: rotate(1deg);
+            text-shadow: -2px 2px 0 #ff0099;
+        }
+        .result-container {
+            border-top: 4px solid #000;
+            padding-top: 25px;
+            margin-top: 25px;
+            background: #00e6ff;
+            box-shadow: inset -4px -4px 0 #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Y2K Brutal Calculator</h1>
+        <input type="text" id="expression" placeholder="Enter a mathematical expression">
+        <br>
+        <button onclick="calculate()">Calculate</button>
+        <div class="result-container">
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+            const expression = document.getElementById('expression').value;
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ expression })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = "Result: " + data.result;
+            })
+            .catch(error => {
+                document.getElementById('result').innerText = "Error: " + error;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kyryl's Socket Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f0f0;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .calculator-container {
+            background: #fafafa;
+            padding: 40px;
+            border-radius: 0;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 12px 12px 0 #000;
+            border: 3px solid #000;
+            position: relative;
+        }
+        .tech-tag {
+            background-color: #ff008f;
+            padding: 5px;
+            border: 4mm double;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        h1 {
+            font-family: 'Fjalla One', sans-serif;
+            font-weight: 700;
+            margin-top: 5vh;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            color: #000;
+            text-transform: uppercase;
+        }
+        input[type="text"] {
+            padding: 15px;
+            border: 3px solid #000;
+            outline: none;
+            width: calc(100% - 36px);
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            background: #fff;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+        }
+        button {
+            background: #ffcc00;
+            color: #000;
+            padding: 15px 30px;
+            border: 3px solid #000;
+            border-radius: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 6px 6px 0 #000;
+        }
+        button:hover {
+            background: #e6b800;
+            transform: translate(-4px, -4px);
+            box-shadow: 10px 10px 0 #000;
+        }
+        .result {
+            font-size: 1.6em;
+            color: #000;
+            font-weight: 700;
+            padding: 15px;
+        }
+        .result-container {
+            border-top: 3px solid #000;
+            margin-top: 20px;
+        }
+        .history-container {
+            padding-top: 15px;
+            margin-top: 4vh;
+            border-top: 3px solid #000;
+            text-align: left;
+        }
+        .history-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+            color: #000;
+        }
+        .history {
+            max-height: 150px;
+            overflow-y: auto;
+            list-style-type: none;
+            padding-left: 0;
+            font-size: 1.2em;
+            scrollbar-width: thin;
+            scrollbar-color: #000 #ffcc00;
+        }
+        .history::-webkit-scrollbar {
+            width: 12px;
+        }
+        .history::-webkit-scrollbar-track {
+            background: #ffcc00;
+            border: 3px solid #000;
+        }
+        .history::-webkit-scrollbar-thumb {
+            background-color: #000;
+            border: 3px solid #ffcc00;
+        }
+        .history li {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .connection-details {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #555;
+            text-align: left;
+            border-top: 3px solid #000;
+            padding-top: 10px;
+        }
+        .logout-container {
+            text-align: center;
+            display: grid;
+        }
+        .logout-button {
+            background: #b15555;
+            color: #fff;
+        }
+        .logout-button:hover {
+            background: #cc0000;
+            transform: translate(-4px, -4px);
+            box-shadow: 10px 10px 0 #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <p>
+            <span class="tech-tag" style="background-color: #ff008f;">MTHP. Tasks</span>
+            <span class="tech-tag" style="background-color: #0087ff;">Python</span>
+            <span class="tech-tag" style="background-color: #c6ff8c;">Sockets</span>
+        </p>
+        <h1>Kyryl's Basic Calculator</h1>
+        <input type="text" id="expression" placeholder="Введи математичний вираз">
+        <br>
+        <button onclick="calculate()">Обчислити</button>
+        <div class="result-container">
+            <div class="result" id="result"></div>
+        </div>
+        <div class="history-container">
+            <div class="history-title">Попередні операції</div>
+            <ul class="history" id="history"></ul>
+        </div>
+        <div class="connection-details" id="connectionDetails">
+            <p>З'єднання: Встановлюється...</p>
+        </div>
+
+        <div class="logout-container">
+            <button class="logout-button" onclick="window.location.href='/logout'">Вийти</button>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const expression = document.getElementById('expression').value.trim();
+            const resultElement = document.getElementById('result');
+            const historyElement = document.getElementById('history');
+            const connectionDetailsElement = document.getElementById('connectionDetails');
+
+            if (!expression) {
+                resultElement.innerText = "Помилка: Вираз відсутній";
+                return;
+            }
+
+            if (!isValidExpression(expression)) {
+                resultElement.innerText = "Помилка: Невідповідний математичний вираз";
+                return;
+            }
+
+            const startTime = new Date().getTime();
+
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ expression })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const endTime = new Date().getTime();
+                const duration = endTime - startTime;
+                connectionDetailsElement.innerHTML = `<p>З'єднання: Успішно (затримка: ${duration} мс)</p>`;
+
+                if (data.result.startsWith("Помилка")) {
+                    resultElement.innerText = data.result;
+                } else {
+                    resultElement.innerText = "Результат: " + data.result;
+                    
+                    // додати до історії
+                    const historyItem = document.createElement('li');
+                    historyItem.innerText = `${expression} = ${data.result}`;
+                    historyElement.appendChild(historyItem);
+                }
+            })
+            .catch(error => {
+                connectionDetailsElement.innerHTML = `<p>З'єднання: Неуспішно</p>`;
+                resultElement.innerText = "Помилка: Не вдається обчислити.";
+            });
+        }
+
+        function isValidExpression(expression) {
+            const validChars = /^[0-9+\-*/(). ]+$/;
+            return validChars.test(expression);
+        }
+    </script>
+</body>
+</html>

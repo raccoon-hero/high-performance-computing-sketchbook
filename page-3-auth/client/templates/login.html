@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f0f0f0;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: #fafafa;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 12px 12px 0 #000;
+            border: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            text-align: left;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Fjalla One', sans-serif;
+            font-weight: 700;
+            font-size: 2.5em;
+            color: #000;
+            text-transform: uppercase;
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], input[type="password"] {
+            padding: 15px;
+            border: 3px solid #000;
+            outline: none;
+            width: calc(100% - 36px);
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            background: #fff;
+            color: #000;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        button {
+            background: #ffcc00;
+            color: #000;
+            padding: 15px;
+            border: 3px solid #000;
+            border-radius: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 6px 6px 0 #000;
+        }
+
+        button:hover {
+            background: #e6b800;
+            transform: translate(-4px, -4px);
+            box-shadow: 10px 10px 0 #000;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .tech-tag {
+            background-color: #ff008f;
+            padding: 5px;
+            border: 4mm double;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .tech-tag-alt {
+            background-color: #0087ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="tech-tag-container">
+            <span class="tech-tag">MTHP. Tasks</span>
+            <span class="tech-tag tech-tag-alt">Python</span>
+        </div>
+        <h1>Authorization</h1>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form id="login-form" action="/login" method="POST">
+            <input type="text" id="username" name="username" placeholder="Прізвисько" required>
+            <input type="password" id="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Увійти</button>
+        </form>
+    </div>
+</body>
+</html>
